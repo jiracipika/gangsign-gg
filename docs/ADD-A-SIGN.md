@@ -15,8 +15,11 @@ Append to `SIGNS`:
   stars: 2,                        // difficulty 1-3
   sus: 'unhinged',                 // "sus level" joke
   lore: 'One or two sentences of fake history.',
-  final: { fingers: [0, 0, 1, 1], thumb: 0.5, thumbOut: 0.6, spread: 0.3 },
-  //                 ^ index, middle, ring, pinky curl 0(straight)..1(folded)
+  final: { fingers: [0, 0, 1, 1], thumbAngle: -70, thumbCurl: 0.5, spread: 0.3 },
+  //                 ^ index, middle, ring, pinky curl -1..1 (positive = toward pinky side)
+  //   thumbAngle: 0 up .. 90 out to the thumb side .. 180 down; negative = crossing inward
+  //   thumbCurl: clamp across the folded fingers; thumbHigh: true = sprouts from the fist top
+  //   also: lean: [deg x4], wristTilt: deg. Preview with: node scripts/art-sheet.mjs
   steps: [                         // 2-4 steps: [t, caption]; t = how far open→final
     [0,   'Start from the open palm…'],
     [0.5, 'Fold the ring and pinky…'],
