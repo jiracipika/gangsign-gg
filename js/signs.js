@@ -1,4 +1,4 @@
-// The Catalog: 12 certified hand shapes. Each entry carries:
+// The Catalog: 13 certified hand shapes. Each entry carries:
 //   final    — hand-svg config for the finished sign
 //   steps    — [t, caption] pairs; t interpolates open-hand -> final for the step art
 //   match(f) — boolean over the feature vector (scan mode, priority = array order)
@@ -8,6 +8,25 @@
 export const HOLD_FRAMES = 40; // ~1.3s of steady shape at 30fps to earn certification
 
 export const SIGNS = [
+  {
+    id: 'fazeup', name: 'FAZE UP', emoji: '🧲', gang: 'FaZe Up Worldwide — Charter Chapter',
+    stars: 3, sus: 'scientifical',
+    lore: 'The physics right-hand rule, inverted: index up, middle cocked out perpendicular, thumb DOWN. Points the direction of the magnetic field and the direction of the takeover. Physics teachers see it and feel a disturbance they cannot name.',
+    final: { fingers: [0, 0.55, 1, 1], thumb: 0.2, thumbOut: 0.7, thumbDown: true, spread: 0.45, lean: [0, 14, 0, 0] },
+    steps: [
+      [0, 'Open palm. Today you learn physics the street way.'],
+      [0.35, 'Fold the ring and pinky down. Index stays tall — that is your Y axis.'],
+      [0.65, 'Cock the middle finger out to the side. Perpendicular energy only.'],
+      [1, 'Now the flip: thumb swings DOWN. Three axes, one crew. FAZE UP. 🧲'],
+    ],
+    match: (f) => f.up.index && f.thumbDown && f.thumb && !f.up.ring && !f.up.pinky,
+    checks: (f) => [
+      ['Index up (the Y axis)', f.up.index],
+      ['Ring + pinky folded', !f.up.ring && !f.up.pinky],
+      ['Thumb extends', f.thumb],
+      ['Thumb points DOWN (the flip)', f.thumbDown],
+    ],
+  },
   {
     id: 'open', name: 'The Open Palm', emoji: '✋', gang: 'Honest Citizens Local 1',
     stars: 1, sus: 'suspiciously polite',
@@ -220,9 +239,10 @@ export const SIGNS = [
   },
 ];
 
-// Scan-mode priority: quirky shapes first, generic ones last. Every demo spec must
+// Scan-mode priority: quirky shapes first, generic ones last. fazeup leads on the strength
+// of thumbDown (no other sign points a thumb at the floor). Every demo spec must
 // resolve to its OWN sign in tests — ORDER changes will fail the suite if they break that.
-export const ORDER = ['pinch', 'ok', 'thumbsup', 'fist', 'spock', 'westside', 'ily', 'rock', 'shaka', 'crossed', 'peace', 'open'];
+export const ORDER = ['fazeup', 'pinch', 'ok', 'thumbsup', 'fist', 'spock', 'westside', 'ily', 'rock', 'shaka', 'crossed', 'peace', 'open'];
 
 export function detectSign(f) {
   for (const id of ORDER) {
@@ -237,6 +257,7 @@ export const byId = (id) => MAP[id];
 
 // Camera-free specs: same data powers the Node tests and the ?demo mode.
 export const DEMO = {
+  fazeup: { index: 'up', middle: 'half', ring: 'fold', pinky: 'fold', thumb: 'down' },
   open: {},
   fist: { index: 'fold', middle: 'fold', ring: 'fold', pinky: 'fold', thumb: 'fold' },
   peace: { index: 'up', middle: 'up', ring: 'fold', pinky: 'fold', thumb: 'fold', spreadIM: 0.18 },

@@ -38,4 +38,4 @@ through the real recognition pipeline.
 See [docs/ADD-A-SIGN.md](docs/ADD-A-SIGN.md). Short version: add one object to `SIGNS`
 in `js/signs.js` (finger states + steps + lore) and one spec to `DEMO`, then
 `npm test` — the suite proves the new sign is detectable and doesn't collide with
-the existing twelve.
+the existing lineup.

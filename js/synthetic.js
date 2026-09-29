@@ -4,7 +4,7 @@
 //
 // spec: {
 //   index/middle/ring/pinky: 'up' | 'fold' | 'half'   (half = curled toward thumb)
-//   thumb: 'out' | 'fold' | 'half' | 'up'
+//   thumb: 'out' | 'fold' | 'half' | 'up' | 'down'
 //   spreadIM/spreadMR/spreadRP: sideways tip gaps in SIZE units (palm length)
 //   pinchDist: force thumb-tip<->index-tip gap (IMAGE units, ~0.05 = touching)
 //   cross: swap index/middle tips (crossed fingers)
@@ -56,6 +56,9 @@ export function syntheticLandmarks(spec = {}) {
   if (s.thumb === 'up') {
     lm[1] = { x: 0.44, y: 0.62, z: 0 }; lm[2] = { x: 0.43, y: 0.50, z: 0 };
     lm[3] = { x: 0.425, y: 0.40, z: 0 }; lm[4] = { x: 0.42, y: 0.32, z: 0 };
+  } else if (s.thumb === 'down') { // inverted right-hand rule: straight down past the wrist
+    lm[1] = { x: 0.43, y: 0.70, z: 0 }; lm[2] = { x: 0.425, y: 0.76, z: 0 };
+    lm[3] = { x: 0.43, y: 0.855, z: 0 }; lm[4] = { x: 0.44, y: 0.945, z: 0 };
   } else if (s.thumb === 'fold') {
     lm[1] = { x: 0.43, y: 0.70, z: 0 }; lm[2] = { x: 0.44, y: 0.645, z: 0 };
     lm[3] = { x: 0.475, y: 0.635, z: 0 }; lm[4] = { x: 0.50, y: 0.63, z: 0 };

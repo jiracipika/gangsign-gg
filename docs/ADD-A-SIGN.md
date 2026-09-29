@@ -38,7 +38,7 @@ Append to `SIGNS`:
 mysign: { index: 'up', middle: 'up', ring: 'fold', pinky: 'fold', thumb: 'out' },
 ```
 
-Options per finger: `'up' | 'fold' | 'half'`; thumb: `'out' | 'fold' | 'half' | 'up'`;
+Options per finger: `'up' | 'fold' | 'half'`; thumb: `'out' | 'fold' | 'half' | 'up' | 'down'`;
 plus `spreadIM/spreadMR/spreadRP` (tip gaps), `pinchDist` (thumb-index tip distance),
 `cross` (swap index/middle tips).
 
@@ -61,6 +61,7 @@ The suite demands that:
 | `halfCurl.*` | curved 115–168° (Pinch zone) |
 | `thumb` | thumb extended (angle + distance from palm) |
 | `thumbUp` | thumb tip clearly above the knuckle line |
+| `thumbDown` | thumb tip clearly below the MCP line (inverted right-hand rule) |
 | `pinch` | thumb-tip ↔ index-tip distance / palm size |
 | `cluster` | max pairwise distance across all 5 tips |
 | `spreadIM/MR/RP` | sideways tip gaps |

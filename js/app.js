@@ -1,5 +1,6 @@
 // GANGSIGN.GG — camera in, verdicts out. Satire not included in the inference.
-import { FilesetResolver, HandLandmarker } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+// MediaPipe is imported lazily inside loadModel(): if the CDN is unreachable the
+// whole app still boots (catalog, practice, lectures, ?demo) — only live scan needs it.
 import { handFeatures } from './features.js';
 import { syntheticLandmarks } from './synthetic.js';
 import { SIGNS, byId, detectSign, DEMO, HOLD_FRAMES } from './signs.js';
@@ -20,7 +21,7 @@ const save = () => localStorage.setItem('gangsign-gg:v1', JSON.stringify(store))
 const OPEN = byId('open').final;
 
 // ---------- catalog + progress UI ----------
-function starRow(n) { return '★'.repeat(n) + '☆'.repeat(3 - n); }
+function starRow(n) { const k = Math.max(0, Math.min(3, n)); return '★'.repeat(k) + '☆'.repeat(3 - k); }
 
 function renderCatalog() {
   $('catalog').innerHTML = SIGNS.map((s) => `
@@ -155,11 +156,19 @@ const CAM_ERR = {
   NotReadableError: 'Camera busy or unplugged. Close other apps using it and retry.',
   NotFoundError: 'No camera found on this device.',
   Insecure: 'Camera needs HTTPS or localhost — this page is on an insecure origin.',
+  CDN: 'Could not reach the MediaPipe CDN. Check your connection and retry.',
   None: 'Camera unavailable on this browser.',
 };
 
 async function loadModel() {
   $('camMsgText').textContent = 'Loading the hand model…';
+  let vision;
+  try {
+    vision = await import(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MP_VERSION}`);
+  } catch {
+    throw Object.assign(new Error('Could not reach the MediaPipe CDN — check your connection and retry.'), { name: 'CDN' });
+  }
+  const { FilesetResolver, HandLandmarker } = vision;
   const fileset = await FilesetResolver.forVisionTasks(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${MP_VERSION}/wasm`);
   const make = (delegate) => HandLandmarker.createFromOptions(fileset, {
     baseOptions: {

@@ -1,13 +1,13 @@
 // Cartoon hand renderer: config -> SVG string. Pure (no DOM) so tests can smoke it.
 // Config: {
 //   fingers: [index, middle, ring, pinky] curl 0..1
-//   thumb: curl 0..1, thumbOut: 0 tucked .. 1 splayed, thumbUp: thumbs-up pose
+//   thumb: curl 0..1, thumbOut: 0 tucked .. 1 splayed, thumbUp: thumbs-up pose, thumbDown: inverted-RHR pose
 //   spread: 0..1 splay, lean: per-finger extra degrees, cuff: gang color, label: caption
 // }
 
 export function handSVG(cfg = {}) {
   const c = {
-    fingers: [0, 0, 0, 0], thumb: 0.15, thumbOut: 0.8, thumbUp: false,
+    fingers: [0, 0, 0, 0], thumb: 0.15, thumbOut: 0.8, thumbUp: false, thumbDown: false,
     spread: 0.35, lean: [0, 0, 0, 0], cuff: '#e11d48', label: null, ...cfg,
   };
   const SKIN = '#f2c193', LINE = '#33231a';
@@ -50,6 +50,8 @@ export function handSVG(cfg = {}) {
   // thumb (in front of the palm)
   if (c.thumbUp) {
     seg(chain(94, 152, -98, [40, 27, 20], [6, 2, 0]), [18, 15.5, 13]);
+  } else if (c.thumbDown) { // hangs down past the cuff, slightly splayed out
+    seg(chain(90, 170, 104, [36, 25, 17], [4, 2, 0]), [18, 15.5, 13]);
   } else {
     const a0 = -90 - (15 + 45 * c.thumbOut);
     seg(chain(86, 178, a0, [40, 27, 20], [12 + c.thumb * 30, c.thumb * 80, c.thumb * 55]), [18, 15.5, 13]);
@@ -73,6 +75,7 @@ export function lerpCfg(a, b, t) {
     thumbOut: L(a.thumbOut ?? 0.8, b.thumbOut ?? 0.8),
     spread: L(a.spread ?? 0.35, b.spread ?? 0.35),
     thumbUp: !!b.thumbUp && t > 0.5,
+    thumbDown: !!b.thumbDown && t > 0.5,
     lean: al.map((v, i) => L(v, bl[i])),
     cuff: b.cuff || a.cuff,
   };

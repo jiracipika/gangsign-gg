@@ -37,6 +37,7 @@ test('every sign: steps render, checks run, final art draws', () => {
   for (const s of SIGNS) {
     assert.ok(s.steps.length >= 2, `${s.id} needs >= 2 steps`);
     assert.ok(s.final, `${s.id} needs final config`);
+    assert.ok(s.stars >= 1 && s.stars <= 3, `${s.id} stars out of the 1-3 UI scale`);
     assert.match(handSVG(s.final), /^<svg/);
     for (const [t, text] of s.steps) {
       assert.equal(typeof t, 'number');
@@ -58,6 +59,23 @@ test('peace and crossed fingers stay distinct', () => {
   assert.ok(crossed.swapX > peace.swapX, 'crossing should push swapX up');
   assert.equal(detectSign(crossed), 'crossed');
   assert.equal(detectSign(peace), 'peace');
+});
+
+test('fazeup: thumbDown is the discriminator, and the flip guards its neighbors', () => {
+  const f = handFeatures(syntheticLandmarks(DEMO.fazeup));
+  assert.ok(f.thumbDown, 'inverted right-hand rule needs thumb DOWN');
+  assert.ok(f.thumb, 'thumb must be extended');
+  assert.ok(f.up.index, 'index stays up (the Y axis)');
+  assert.equal(detectSign(f), 'fazeup');
+  // same hand with the thumb back up must NOT certify (no drive-by FAZE UPs)
+  const flipped = handFeatures(syntheticLandmarks({ ...DEMO.fazeup, thumb: 'out' }));
+  assert.ok(!flipped.thumbDown);
+  assert.notEqual(detectSign(flipped), 'fazeup');
+  // tucked thumbs (fist, peace, rock, crossed) must never read as pointing down
+  for (const id of ['fist', 'peace', 'rock', 'crossed']) {
+    const f2 = handFeatures(syntheticLandmarks(DEMO[id]));
+    assert.ok(!f2.thumbDown, `${id} tucked thumb misread as thumbDown`);
+  }
 });
 
 test('hold window is a sane length', () => {

@@ -48,6 +48,10 @@ export function handFeatures(lm) {
   // thumb "pointing up" = thumb tip clearly ABOVE the whole knuckle line (fists don't qualify)
   const knuckleTop = Math.min(lm[6].y, lm[10].y, lm[14].y, lm[18].y);
   const thumbUp = lm[4].y < knuckleTop - size * 0.15;
+  // "pointing down" = tip clearly BELOW the knuckle (MCP) line. A tucked fist thumb hugs
+  // the palm and never gets there; the inverted right-hand rule thumb does.
+  const knuckleBot = Math.max(lm[5].y, lm[9].y, lm[13].y, lm[17].y);
+  const thumbDown = lm[4].y > knuckleBot + size * 0.15;
 
   const pinch = dist(lm[4], lm[8]) / size;   // thumb tip <-> index tip
   const pinchP = dist(lm[4], lm[12]) / size; // thumb tip <-> middle tip
@@ -69,7 +73,7 @@ export function handFeatures(lm) {
   const swapX = (px(lm[8]) - px(lm[12])) / size;         // >0 = index tip landed right of middle tip = crossed
 
   return {
-    size, pipAngle, up, halfCurl, folded, thumb, thumbUp,
+    size, pipAngle, up, halfCurl, folded, thumb, thumbUp, thumbDown,
     pinch, pinchP, spreadIM, spreadMR, spreadRP, cluster,
     tipsX, pipsX, swapX,
   };
