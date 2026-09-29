@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GANGSIGN.GG — get street certified (100% satire)</title>
+<meta name="description" content="Your webcam grades your hand signs. Twelve legendary hand shapes, step-by-step lessons, live recognition. Peace signs, rock horns, one Italian pinch. Zero real gangs.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤘</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="ticker" aria-hidden="true"><div class="ticker__track" id="ticker"></div></div>
+
+<header class="top">
+  <div class="logo">GANGSIGN<span>.GG</span></div>
+  <nav>
+    <a href="#scan">Scanner</a>
+    <a href="#signs">Catalog</a>
+    <a href="#lectures">Street Lectures</a>
+    <a href="#faq">FAQ</a>
+  </nav>
+  <div class="creds" id="credCount">0/12 certified</div>
+</header>
+
+<section class="hero">
+  <h1>Get <em>street</em> certified.</h1>
+  <p class="tag">Your webcam watches your hand. We grade the sign. Twelve legendary hand shapes with step-by-step lessons and live recognition — for you and the group chat.</p>
+  <div class="cta">
+    <a class="btn btn--primary" href="#scan">Start scanning</a>
+    <a class="btn" href="#signs">Browse the catalog</a>
+  </div>
+  <p class="fineprint">100% satire · 0 gangs consulted · peace signs, rock horns, and one very Italian pinch.</p>
+</section>
+
+<section id="scan" class="scan">
+  <div class="cam-wrap">
+    <video id="cam" playsinline muted></video>
+    <canvas id="overlay" width="640" height="400"></canvas>
+    <div class="cam-msg" id="camMsg">
+      <p id="camMsgText">Camera off. Nothing leaves your device — all tracking runs locally in your browser.</p>
+      <button class="btn btn--primary" id="startBtn">Enable camera</button>
+      <button class="btn" id="demoBtn">Run camera-free demo</button>
+    </div>
+    <div class="demo-banner" id="demoBanner" hidden>DEMO MODE — synthetic hands through the real pipeline</div>
+    <div class="stamp" id="stamp">CERTIFIED</div>
+  </div>
+  <aside class="scan-side">
+    <h2>Live read</h2>
+    <div id="detectCard" class="detect-card"><span class="detect-hand">🖐</span> show me a hand</div>
+    <h2>Your credentials</h2>
+    <div id="progressChips" class="chips"></div>
+    <h2>Street name</h2>
+    <input id="streetName" maxlength="24" placeholder="Anonymous Menace" autocomplete="off">
+  </aside>
+</section>
+
+<section id="signs">
+  <h2>The Catalog</h2>
+  <p class="section-sub">Twelve certified shapes. Click any card to train it with live camera feedback.</p>
+  <div id="catalog" class="grid"></div>
+</section>
+
+<section id="practice" class="practice" hidden>
+  <div class="practice-head">
+    <div>
+      <h2 id="prTitle"></h2>
+      <p id="prGang" class="dim"></p>
+      <p id="prLore" class="lore"></p>
+    </div>
+    <button class="btn btn--small" id="prClose">✕ close</button>
+  </div>
+  <div class="practice-body">
+    <div id="prSteps" class="steps"></div>
+    <div class="practice-live">
+      <h3>Live checklist</h3>
+      <ul id="prChecks"></ul>
+      <div class="holdbar"><div id="holdFill"></div><span id="holdText">hold the final shape…</span></div>
+      <p class="dim small">Tip: face the camera, hand fully in frame, decent light. The skeleton overlay shows what the tracker sees.</p>
+    </div>
+  </div>
+</section>
+
+<section id="lectures">
+  <h2>Street Lectures</h2>
+  <p class="section-sub">Actual humans explaining where these gestures come from. Embedded from YouTube.</p>
+  <div id="lectures" class="grid grid--lectures"></div>
+</section>
+
+<section id="faq">
+  <h2>FAQ (nobody asked)</h2>
+  <details>
+    <summary>Are these real gang signs?</summary>
+    <p>No. These are universally known <em>gestures</em> — peace sign, rock horns, shaka, thumbs up, the OK circle, Spock's salute, the Italian pinch, crossed fingers, ASL "I love you" — wearing silly fake-gang costumes. The lore is satire. The hand shapes are just hand shapes.</p>
+  </details>
+  <details>
+    <summary>Will this get me in trouble?</summary>
+    <p>The most dangerous thing on this site is the Circle Game below-the-waist rule, and even that only obligates a friendly bop. Go be nice to people.</p>
+  </details>
+  <details>
+    <summary>Wait, is the ILY sign making fun of sign language?</summary>
+    <p>Opposite — 🤟 is real American Sign Language for "I love you", and it's included with respect. ASL is a full language with its own grammar; this site is a joke about internet meme culture, not about ASL. Consider actually learning ASL. It's a superpower.</p>
+  </details>
+  <details>
+    <summary>Why does the tracker keep misreading my thumb?</summary>
+    <p>Hand landmarks are 21 dots estimated from a tiny webcam image; thumbs are drama queens. Good light, hand fully in frame, palm facing the camera. If it still fails — the tracker is sassy. Try again.</p>
+  </details>
+  <details>
+    <summary>Does my video get uploaded anywhere?</summary>
+    <p>No. Frames are processed locally by MediaPipe in your browser and never leave your device. There is no server, no upload, no storage. Your hands remain between you and your webcam.</p>
+  </details>
+  <details>
+    <summary>Can we add our own crew's signs?</summary>
+    <p>Yes — that's the whole point. See <code>docs/ADD-A-SIGN.md</code>: each sign is a few lines of data (finger states + steps + lore). Teach the dev, ship the sign.</p>
+  </details>
+</section>
+
+<footer>
+  <p>GANGSIGN.GG — satire. Built with MediaPipe Hand Landmarker. The only thing we throw is a frisbee.</p>
+  <p class="dim">No video leaves your device · credentials stored in your browser's localStorage · gang affiliation: couch.</p>
+</footer>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
