@@ -34,6 +34,7 @@ function renderCatalog() {
     </button>`).join('');
   $('catalog').querySelectorAll('.card').forEach((el) =>
     el.addEventListener('click', () => openPractice(el.dataset.sign)));
+  $('catCount').textContent = `${SIGNS.length} certified shapes — newest: ${SIGNS[0].name}. Click any card to train it with live camera feedback.`;
 }
 
 function renderCreds() {
