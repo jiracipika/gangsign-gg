@@ -213,26 +213,41 @@ $('demoBtn').addEventListener('click', () => startDemo(true));
 // ---------- demo mode (camera-free, synthetic hands through the REAL pipeline) ----------
 const DEMO_IDS = Object.keys(DEMO);
 const DEMO_DWELL = new URLSearchParams(location.search).has('fast') ? 6000 : 2800;
-let demoIdx = 0, demoAt = 0;
+let demoIdx = 0, demoAt = 0, demoArtT = -1;
 
 function startDemo(manual) {
   demoOn = true;
   $('demoBanner').hidden = false;
   $('camMsg').hidden = true;
+  $('demoArt').hidden = false;
   if (manual) $('camMsgText').textContent = 'Demo mode.';
 }
-function stopDemo() { demoOn = false; $('demoBanner').hidden = true; }
+function stopDemo() {
+  demoOn = false;
+  $('demoBanner').hidden = true;
+  $('demoArt').hidden = true;
+}
 
 // ---------- main loop (rAF rescheduled FIRST so one throw can't kill it) ----------
 function loop() {
   requestAnimationFrame(loop);
   const now = performance.now();
   if (demoOn) {
-    if (now - demoAt > DEMO_DWELL) { demoAt = now; demoIdx = (demoIdx + 1) % DEMO_IDS.length; }
+    if (now - demoAt > DEMO_DWELL) { demoAt = now; demoIdx = (demoIdx + 1) % DEMO_IDS.length; demoArtT = -1; }
     const id = DEMO_IDS[demoIdx];
+    // the cartoon hand is the show: morph open -> final over the first 55% of the dwell,
+    // redrawn in 8 discrete steps so the DOM isn't churned every frame
+    const phase = Math.min(1, (now - demoAt) / (DEMO_DWELL * 0.55));
+    const t = Math.round(phase * 8) / 8;
+    if (t !== demoArtT) {
+      demoArtT = t;
+      const s = byId(id);
+      $('demoArt').innerHTML = handSVG(lerpCfg(OPEN, s.final, t))
+        + `<span class="demo-label">${s.emoji} ${s.name} — ${s.gang}</span>`;
+    }
     const jit = (p) => ({ x: p.x + Math.sin(now / 400 + p.y * 40) * 0.004, y: p.y + Math.cos(now / 500 + p.x * 40) * 0.004, z: 0 });
     const lm = syntheticLandmarks(DEMO[id]).map(jit);
-    drawSkeleton(lm);
+    drawSkeleton(lm, 0.35); // dimmed ghost: proof the landmarks feed the real pipeline
     handleLandmarks(lm, `demo: ${id}`);
     return;
   }
@@ -277,9 +292,10 @@ function featOf(lm) {
 }
 let lastHandedness = 'Left';
 
-function drawSkeleton(lm) {
+function drawSkeleton(lm, alpha = 1) {
   const w = overlay.width, h = overlay.height;
   octx.clearRect(0, 0, w, h);
+  octx.globalAlpha = alpha;
   octx.shadowColor = '#22d3ee';
   octx.shadowBlur = 8;
   octx.strokeStyle = '#67e8f9';
@@ -298,6 +314,7 @@ function drawSkeleton(lm) {
     octx.arc(p.x * w, p.y * h, 3, 0, Math.PI * 2);
   }
   octx.fill();
+  octx.globalAlpha = 1;
 }
 function clearSkeleton() { octx.clearRect(0, 0, overlay.width, overlay.height); }
 
