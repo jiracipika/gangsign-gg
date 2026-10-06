@@ -55,6 +55,10 @@ export function handFeatures(lm) {
 
   const pinch = dist(lm[4], lm[8]) / size;   // thumb tip <-> index tip
   const pinchP = dist(lm[4], lm[12]) / size; // thumb tip <-> middle tip
+  // thumb "out" = tip's reach from the index knuckle vs knuckle-row width.
+  // Orientation-free (unlike thumbUp/Down): a real W/shaka thumb is often
+  // BENT, which fails the thumb-straight angle test but still measures out.
+  const thumbOut = dist(lm[4], lm[5]) / Math.max(dist(lm[5], lm[17]), 1e-6);
   const spreadIM = dist(lm[8], lm[12]) / size;
   const spreadMR = dist(lm[12], lm[16]) / size;
   const spreadRP = dist(lm[16], lm[20]) / size;
@@ -73,7 +77,7 @@ export function handFeatures(lm) {
   const swapX = (px(lm[8]) - px(lm[12])) / size;         // >0 = index tip landed right of middle tip = crossed
 
   return {
-    size, pipAngle, up, halfCurl, folded, thumb, thumbUp, thumbDown,
+    size, pipAngle, up, halfCurl, folded, thumb, thumbOut, thumbUp, thumbDown,
     pinch, pinchP, spreadIM, spreadMR, spreadRP, cluster,
     tipsX, pipsX, swapX,
   };

@@ -13,7 +13,33 @@ Language and gets real respect.
 
 ```bash
 npm start        # serves on http://localhost:8369 (camera needs localhost/HTTPS)
-npm test         # 7-check classifier suite (node --test)
+npm test         # classifier + real-data suites (node --test)
+
+## Dataset grounding (2026-10-05)
+
+The sign thresholds are no longer eyeballed. 1,080 real MediaPipe landmark
+samples (60 per class) were extracted from the HaGRID gesture dataset
+(https://github.com/hukenovs/hagrid — fist, palm, peace, rock, ok, like,
+dislike, call, two_up, ...) with the same hand_landmarker model the site runs,
+and every matcher was re-fit against the real distributions:
+
+- two_up -> westside was 0/60 on real W hands (the old spreadIM > 0.34 gate
+  rejects how Ws are actually held — fingers TOGETHER, 0.23±0.11 palm units);
+  now gated on thumb reach + together-ness + no tip-cross, 78% recall.
+- real fists kept failing the old Y-based thumbUp proxy; the gate is now the
+  orientation-free thumbOut reach, and the cluster limit was raised to the
+  real max-tip-span of fists (1.3, was 0.8).
+- crossed fingers: swapX now bounded (0.15-0.6) plus a touching-knuckles gate
+  (pipsX < 0.3), so spread peace Vs (pipsX >= 0.33 on real hands) stop
+  misreading as crossed.
+- spock's middle/ring gap raised to 0.58 (real open palms reach 0.55).
+- ok needs two-of-three fan fingers up (real tilted oks rarely register all
+  three).
+
+Measured with the exact shipping classifier over the 720 scored samples:
+**94.3%** top-1 (was 70.6% pre-rework). tests/fixtures/hagrid-real.json keeps
+8 real samples per class (seeded shuffle) and tests/real-data.test.js pins
+per-class floors + an 85% overall floor so regressions fail CI.
 ```
 
 Open http://localhost:8369 → **Enable camera** → click any catalog card to train it.
