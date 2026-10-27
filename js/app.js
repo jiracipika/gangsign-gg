@@ -195,8 +195,15 @@ async function startCamera() {
     camActive = true;
     $('camMsg').hidden = true;
     if (!landmarker) await loadModel();
+    recent = []; // demo detections must not bias the first live verdicts
+    lastVideoTime = -1;
     $('camMsgText').textContent = 'Tracking.';
   } catch (err) {
+    // Permission was granted but the model failed (CDN down): release the
+    // camera instead of leaving a live feed pointed at a dead pipeline.
+    video.srcObject?.getTracks().forEach((t) => t.stop());
+    video.srcObject = null;
+    camActive = false;
     const msg = CAM_ERR[err.name === 'Insecure' ? 'Insecure' : err.name] || `${err.name}: ${err.message}`;
     $('camMsgText').innerHTML = `<b>Camera says no:</b> ${msg}<br><br>You can still run the camera-free demo.`;
   }
